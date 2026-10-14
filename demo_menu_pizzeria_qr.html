@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Demo di menu digitale per pizzeria italiana">
+<title>Forno Vivo — Menu digitale</title>
+<style>
+:root{--bg:#f7f4ef;--paper:#fffdf9;--ink:#22201d;--muted:#77716a;--red:#a6382b;--red2:#7e261e;--line:#e9e1d7;--gold:#c9a56a}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+header{background:#211f1b;color:#fff;padding:28px 20px 34px;text-align:center;position:relative;overflow:hidden}
+header:before,header:after{content:"";position:absolute;border:1px solid rgba(201,165,106,.32);border-radius:50%;width:250px;height:250px;top:-170px}header:before{left:-80px}header:after{right:-80px}
+.eyebrow{text-transform:uppercase;letter-spacing:.23em;font-size:.7rem;color:var(--gold);font-weight:700}
+.brand{font-family:Georgia,"Times New Roman",serif;font-size:clamp(2.5rem,8vw,4rem);font-weight:500;letter-spacing:-.04em;margin:8px 0}
+header p{margin:0;color:#d6d0c8;font-size:.95rem}.demo-note{display:inline-block;margin-top:18px;border:1px solid #60513c;color:#e8d6b8;border-radius:99px;padding:6px 11px;font-size:.72rem}
+.sticky{position:sticky;top:0;z-index:10;background:rgba(247,244,239,.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);padding:12px 14px}
+.search{display:block;width:min(680px,100%);margin:0 auto 10px;border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:1rem;background:#fff}
+nav{display:flex;gap:8px;overflow-x:auto;max-width:760px;margin:auto;padding-bottom:2px}nav button{white-space:nowrap;border:1px solid var(--line);border-radius:99px;background:#fff;padding:9px 14px;color:var(--ink);font-weight:650;cursor:pointer}nav button.active{background:var(--red);border-color:var(--red);color:#fff}
+main{max-width:820px;margin:0 auto;padding:24px 16px 100px}
+.intro{display:flex;justify-content:space-between;align-items:end;gap:16px;margin:10px 0 22px}.intro h2{font-family:Georgia,serif;font-size:2rem;font-weight:500;margin:0}.intro p{color:var(--muted);margin:6px 0 0;font-size:.92rem}.open-label{font-size:.76rem;border:1px solid #cbdcc9;background:#eff6ed;color:#37613a;border-radius:99px;padding:7px 10px;white-space:nowrap}
+.section-title{display:flex;align-items:center;gap:12px;margin:30px 0 12px}.section-title h3{margin:0;font-family:Georgia,serif;font-weight:500;font-size:1.55rem}.section-title span{height:1px;background:var(--line);flex:1}
+.items{display:grid;gap:10px}.item{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;align-items:flex-start;gap:14px;box-shadow:0 2px 7px #30201005}.item[hidden]{display:none}.emoji{width:56px;height:56px;flex:0 0 56px;border-radius:12px;background:#f0e8dd;display:grid;place-items:center;font-size:1.8rem}.details{flex:1;min-width:0}.item h4{font-size:1rem;margin:2px 0 5px}.item p{font-size:.87rem;line-height:1.45;color:var(--muted);margin:0}.price{font-weight:750;color:var(--red);white-space:nowrap;margin-left:4px}
+.tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.tag{font-size:.68rem;background:#f4ece1;color:#70563c;border-radius:5px;padding:4px 6px}
+footer{background:#211f1b;color:#eee7dc;text-align:center;padding:30px 18px}footer h3{font-family:Georgia,serif;font-weight:500;font-size:1.5rem;margin:0 0 8px}footer p{color:#c6beb2;font-size:.87rem;line-height:1.6;margin:4px}
+.allergen{font-size:.76rem;color:var(--muted);line-height:1.5;margin-top:24px;padding:14px;border:1px dashed #d8cfc2;border-radius:12px}
+.cartbar{position:fixed;bottom:14px;left:14px;right:14px;max-width:780px;margin:auto;z-index:20;background:var(--red);color:#fff;border-radius:14px;padding:13px 16px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 8px 24px #33140f35}
+.cartbar span{font-size:.88rem}.cartbar button{border:1px solid #ffffff70;background:#fff;color:var(--red2);border-radius:9px;padding:9px 12px;font-weight:750;cursor:pointer}
+.toast{position:fixed;top:15px;left:50%;transform:translateX(-50%);background:#211f1b;color:#fff;padding:12px 16px;border-radius:10px;z-index:30;display:none;max-width:90%;font-size:.9rem}.toast.show{display:block}
+@media(min-width:650px){main{padding-top:32px}.items{grid-template-columns:1fr 1fr}.item{min-height:130px}.intro h2{font-size:2.3rem}}
+</style>
+</head>
+<body>
+<header>
+  <div class="eyebrow">Pizzeria · Cucina italiana</div>
+  <h1 class="brand">Forno Vivo</h1>
+  <p>Impasto lento, ingredienti sinceri, forno caldo.</p>
+  <div class="demo-note">MENU DIMOSTRATIVO · DATI E PREZZI DI ESEMPIO</div>
+</header>
+<div class="sticky">
+  <input id="search" class="search" type="search" placeholder="Cerca una pizza o un ingrediente…" aria-label="Cerca nel menu">
+  <nav aria-label="Categorie menu">
+    <button class="active" data-target="tutte">Tutto</button>
+    <button data-target="classiche">Le classiche</button>
+    <button data-target="speciali">Speciali</button>
+    <button data-target="fritti">Fritti</button>
+    <button data-target="dolci">Dolci</button>
+    <button data-target="bevande">Bevande</button>
+  </nav>
+</div>
+<main>
+  <div class="intro"><div><h2>Il nostro menu</h2><p>Scegli con calma: il buono richiede tempo.</p></div><span class="open-label">● Menu digitale</span></div>
+  <section data-section="classiche">
+    <div class="section-title"><h3>Le classiche</h3><span></span></div>
+    <div class="items">
+      <article class="item" data-cat="classiche" data-search="margherita pomodoro fior di latte basilico"><div class="emoji">🍕</div><div class="details"><h4>Margherita</h4><p>Pomodoro, fior di latte, basilico fresco, olio EVO.</p><div class="tags"><span class="tag">Vegetariana</span></div></div><div class="price">€ 6,50</div></article>
+      <article class="item" data-cat="classiche" data-search="marinara pomodoro aglio origano"><div class="emoji">🍅</div><div class="details"><h4>Marinara</h4><p>Pomodoro, aglio, origano e olio extravergine.</p><div class="tags"><span class="tag">Vegana*</span></div></div><div class="price">€ 5,50</div></article>
+      <article class="item" data-cat="classiche" data-search="diavola salame piccante mozzarella"><div class="emoji">🌶️</div><div class="details"><h4>Diavola</h4><p>Pomodoro, fior di latte e salame piccante.</p><div class="tags"><span class="tag">Piccante</span></div></div><div class="price">€ 8,00</div></article>
+      <article class="item" data-cat="classiche" data-search="prosciutto funghi cotto champignon"><div class="emoji">🍄</div><div class="details"><h4>Prosciutto e funghi</h4><p>Fior di latte, prosciutto cotto e funghi champignon.</p></div><div class="price">€ 8,50</div></article>
+    </div>
+  </section>
+  <section data-section="speciali">
+    <div class="section-title"><h3>Le speciali</h3><span></span></div>
+    <div class="items">
+      <article class="item" data-cat="speciali" data-search="bufalina mozzarella bufala pomodoro basilico"><div class="emoji">🌿</div><div class="details"><h4>Bufalina</h4><p>Pomodoro, mozzarella di bufala campana DOP, basilico.</p></div><div class="price">€ 9,50</div></article>
+      <article class="item" data-cat="speciali" data-search="bosco salsiccia funghi provola"><div class="emoji">🪵</div><div class="details"><h4>La Bosco</h4><p>Provola, salsiccia, funghi e una nota di pepe nero.</p></div><div class="price">€ 10,00</div></article>
+      <article class="item" data-cat="speciali" data-search="orto verdure zucchine melanzane peperoni"><div class="emoji">🥬</div><div class="details"><h4>Orto di stagione</h4><p>Fior di latte, verdure di stagione e basilico.</p><div class="tags"><span class="tag">Vegetariana</span></div></div><div class="price">€ 9,00</div></article>
+      <article class="item" data-cat="speciali" data-search="quattro formaggi gorgonzola provola grana mozzarella"><div class="emoji">🧀</div><div class="details"><h4>Quattro formaggi</h4><p>Fior di latte, provola, gorgonzola e grana.</p></div><div class="price">€ 9,00</div></article>
+    </div>
+  </section>
+  <section data-section="fritti">
+    <div class="section-title"><h3>Fritti & sfizi</h3><span></span></div>
+    <div class="items">
+      <article class="item" data-cat="fritti" data-search="crocchè patate prezzemolo"><div class="emoji">🥔</div><div class="details"><h4>Crocchè di patate</h4><p>Patate, prezzemolo e una crosticina dorata.</p></div><div class="price">€ 2,00</div></article>
+      <article class="item" data-cat="fritti" data-search="frittatina pasta besciamella prosciutto"><div class="emoji">🍝</div><div class="details"><h4>Frittatina di pasta</h4><p>Pasta, besciamella e prosciutto cotto.</p></div><div class="price">€ 2,50</div></article>
+      <article class="item" data-cat="fritti" data-search="patatine fritte"><div class="emoji">🍟</div><div class="details"><h4>Patatine fritte</h4><p>Classiche, croccanti, da condividere.</p></div><div class="price">€ 3,50</div></article>
+    </div>
+  </section>
+  <section data-section="dolci">
+    <div class="section-title"><h3>Dolci</h3><span></span></div>
+    <div class="items">
+      <article class="item" data-cat="dolci" data-search="tiramisù mascarpone caffè cacao"><div class="emoji">🍰</div><div class="details"><h4>Tiramisù della casa</h4><p>Crema al mascarpone, caffè e cacao.</p></div><div class="price">€ 5,00</div></article>
+      <article class="item" data-cat="dolci" data-search="pizza nutella nocciole zucchero"><div class="emoji">🍫</div><div class="details"><h4>Pizza dolce</h4><p>Crema al cacao e nocciole, zucchero a velo.</p></div><div class="price">€ 6,00</div></article>
+    </div>
+  </section>
+  <section data-section="bevande">
+    <div class="section-title"><h3>Bevande</h3><span></span></div>
+    <div class="items">
+      <article class="item" data-cat="bevande" data-search="acqua naturale frizzante 0,5"><div class="emoji">💧</div><div class="details"><h4>Acqua 0,5 L</h4><p>Naturale o frizzante.</p></div><div class="price">€ 1,50</div></article>
+      <article class="item" data-cat="bevande" data-search="bibita lattina cola aranciata"><div class="emoji">🥤</div><div class="details"><h4>Bibita in lattina</h4><p>Selezione di bibite analcoliche.</p></div><div class="price">€ 2,50</div></article>
+      <article class="item" data-cat="bevande" data-search="birra chiara 0,33"><div class="emoji">🍺</div><div class="details"><h4>Birra chiara 0,33 L</h4><p>Servita fresca.</p></div><div class="price">€ 3,50</div></article>
+    </div>
+  </section>
+  <div class="allergen"><strong>Allergeni e informazioni:</strong> questo è un esempio dimostrativo. Prima della pubblicazione, il ristoratore deve verificare ingredienti, allergeni, contaminazioni crociate, disponibilità e prezzi di ogni prodotto. *La dicitura vegana va confermata con il locale.</div>
+</main>
+<footer><h3>Forno Vivo</h3><p>Una demo di menu digitale pensata per smartphone.</p><p>Indirizzo, orari e contatti da inserire dopo la conferma del ristoratore.</p><p style="margin-top:16px;font-size:.72rem">ESEMPIO FITTIZIO · NON È UN LOCALE REALE</p></footer>
+<div class="cartbar"><span id="count">Esplora il menu · 0 selezioni</span><button id="contact">Richiedi informazioni</button></div>
+<div class="toast" id="toast" role="status"></div>
+<script>
+const buttons=[...document.querySelectorAll('nav button')], items=[...document.querySelectorAll('.item')], sections=[...document.querySelectorAll('main section')];
+let active='tutte';
+function filter(){const q=document.querySelector('#search').value.trim().toLowerCase();items.forEach(item=>{const cat=active==='tutte'||item.dataset.cat===active;const match=!q||(item.dataset.search+' '+item.innerText).toLowerCase().includes(q);item.hidden=!(cat&&match)});sections.forEach(s=>{s.hidden=!([...s.querySelectorAll('.item')].some(i=>!i.hidden))})}
+buttons.forEach(b=>b.addEventListener('click',()=>{active=b.dataset.target;buttons.forEach(x=>x.classList.toggle('active',x===b));filter()}));
+document.querySelector('#search').addEventListener('input',filter);
+document.querySelector('#contact').addEventListener('click',()=>{const toast=document.querySelector('#toast');toast.textContent='Demo interattiva: qui si può inserire il contatto WhatsApp del locale dopo aver ricevuto il consenso del titolare.';toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),4500)});
+</script>
+</body>
+</html>
